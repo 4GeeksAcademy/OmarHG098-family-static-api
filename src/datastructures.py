@@ -13,46 +13,38 @@ class FamilyStructure:
         self.last_name = last_name
 
         # example list of members
-        self._members = [
-                 {
-                "id":self._generateId(),
-                "first_name": "John",
-                "age":33,
-                "lucky_numbers": [7, 13, 22]
-            },
-            {
-                "id":self._generateId(),
-                "first_name": "Jane",
-                "age":35,
-                "lucky_numbers": [10, 14, 3]
-            },
-            {
-                "id":self._generateId(),
-                "first_name": "Jimmy",
-                "age":5,
-                "lucky_numbers": [1]
-            }
-        ]
+        self._members = []
+        
+    def serialize(self):
+        return {
+            "id": self.id,
+            "first_name": self.name,
+            "age": self.age,
+            "lucky_numbers": self.lucky_numbers
+        }
 
     # read-only: Use this method to generate random members ID's when adding members into the list
     def _generateId(self):
         return randint(0, 99999999)
 
     def add_member(self, member):
-        # fill this method and update the return
-        pass
+        if member.get("id", None) is None:
+            member["id"] = self._generateId()
+        self._members.append(member)
+        return self._members
 
     def delete_member(self, id):
-        for member in self._members:
+        for position, member in enumerate(self._members):
             if member["id"] == id:
-                del self._members[member]
-                return {"done": True}
+                self._members.pop(position)
+                return True
+        return False
 
     def get_member(self, id):
-        for member in (self._members):
+        for member in self._members:
             if member["id"] == id:
-                return self._members[member]
-            return
+                return member
+        return
         
 
     # this method is done, it returns a list with all the family members
