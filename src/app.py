@@ -53,15 +53,15 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/members/<int:id>', methods = ['GET'])
+@app.route('/member/<int:id>', methods = ['GET'])
 def get_member(id):
     member = jackson_family.get_member(id)
     if member is None:
         return jsonify({"error": "Member not found"}), 404
     else:
-        return jsonify({"member": member}), 200
+        return jsonify(member), 200
 
-@app.route('/members/<int:id>', methods = ['DELETE'])
+@app.route('/member/<int:id>', methods = ['DELETE'])
 def delete_member(id):
     #member = jackson_family.get_member(id)
     
@@ -71,16 +71,34 @@ def delete_member(id):
     # else: 
 
     if success != "Member not found":
-        return jsonify({"done": "True"}), 200
+        return jsonify({"done": True}), 200
     else:
         return jsonify({"error": "Member not found"}), 404
+    
+"""
+DELETE USER
+"""    
 
-@app.route('/members', methods = ['POST'])
+@app.route('/member', methods = ['POST'])
 def add_member():
-    request_body = request.get_json
+    request_body = request.get_json(force=True)
     jackson_family.add_member(request_body)
     members = jackson_family.get_all_members()
     return jsonify(members), 200
+
+
+
+    # body = request.get_json(force = True)
+    # new_member = {
+    #     {
+    #         "age": body.get("age", None),
+    #         "first_name": body.get("first_name", None),
+    #         "lucky_numbers": body.get("lucky_numbers", None)
+    #     }
+    # }
+    # jackson_family.add_member(new_member)
+    # members = jackson_family.get_all_members()
+    # return jsonify(members), 200
     
 
 @app.route('/members', methods=['GET'])
@@ -88,12 +106,10 @@ def handle_hello():
 
     # this is how you can use the Family datastructure by calling its methods
     members = jackson_family.get_all_members()
-    response_body = {
-        "family": members
-    }
 
 
-    return jsonify(response_body), 200
+
+    return jsonify(members), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
